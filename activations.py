@@ -1,24 +1,56 @@
-import math
+import numpy as np
+import time 
+import random
+
+def sigmoid(x, grad=False):
+    if grad:
+        return sigmoid(x) * (1 - sigmoid(x))
+    else:
+        return 1 / (1 + np.exp(-x))
 
 
-def step(x):
-    return 1 if x > 0 else 0
+X_sigmoid = sigmoid(np.array([1, 2, 3]), grad=True)
+print(X_sigmoid)
 
 
-def sigmoid(x):
-    return 1 / (1 + math.pow(math.e, -x))
+def img2Vector(image: np.array):
+    l, h, d = image.shape
+    return image.reshape(l, h, d, 1)
 
 
-def tanH(x):
-    return (math.exp(2 * x) - 1) / ( math.exp(2 * x) + 1)
+print(img2Vector(np.random.rand(3, 3, 2)))
 
 
-def reLU(x):
-    return max(0, x)
+def normaliseRow(x):
+    return x / np.linalg.norm(x, axis=1, keepdims=True)
+
+x = np.array([[0, 1000, 4], [2, 6, 4]])
+print(normaliseRow(x))
 
 
-def softmax(x: list):
-    exps = [math.exp(x) for i in x]
-    exps_sum = sum(exps)
-    prob = [j / exps_sum for j in exps]
-    return prob
+def softmax(x):
+    return np.exp(x) / np.sum(x, axis=1, keepdims=True)
+
+x = np.array([[9, 2, 5, 0, 0], [7, 5, 0, 0, 0]])
+print(softmax(x))
+
+
+x1 = [9, 2, 5, 0, 0, 7, 5, 0, 0, 0, 9, 2, 5, 0, 0]
+x2 = [9, 2, 2, 9, 0, 9, 2, 5, 0, 0, 9, 2, 5, 0, 0]
+
+st = time.process_time()
+dot = 0
+
+for i in range(len(x1)):
+    dot += x1[i]*x2[i]
+
+sp = time.process_time()
+
+print(f"Time took : {sp-st}")
+
+
+st = time.process_time()
+dot = np.dot(x1, x2)
+sp = time.process_time()
+
+print(f"Time took : {sp-st}")
